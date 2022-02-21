@@ -1,0 +1,61 @@
+date/time          : 2022-02-21, 00:07:27, 226ms
+computer name      : MYCOMPUTER
+user name          : MyUsername
+registered owner   : Windows User
+operating system   : Windows 10 x64 build 19043
+system language    : English
+system up time     : 4 days 8 hours
+program up time    : 28 seconds
+processors         : 12x Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz
+physical memory    : 10043/16314 MB (free/total)
+free disk space    : (C:) 89,63 GB (F:) 381,42 GB
+display mode       : 1920x1080, 32 bit
+process id         : $318
+allocated memory   : 53,79 MB
+largest free block : 1,55 GB
+executable         : Project2.exe
+exec. date/time    : 2022-02-21 00:06
+version            : 1.0.0.0
+compiled with      : Delphi 10.4 Sydney
+madExcept version  : 5.1.1
+callstack crc      : $711d3df8, $70ca6a25, $70ca6a25
+exception number   : 1
+exception class    : CustomException
+exception message  : Hello, World.
+
+main thread ($12c0):
+007f2d31 +01d Project2.exe Unit1             35   +1 TForm1.Button1Click
+005e57e7 +073 Project2.exe Vcl.Controls    7596   +9 TControl.Click
+005fe542 +01e Project2.exe Vcl.StdCtrls    5609   +3 TCustomButton.Click
+005ff6cc +00c Project2.exe Vcl.StdCtrls    6244   +1 TCustomButton.CNCommand
+005e528e +2be Project2.exe Vcl.Controls    7480  +91 TControl.WndProc
+005ea1e3 +693 Project2.exe Vcl.Controls   10424 +169 TWinControl.WndProc
+005fe19c +06c Project2.exe Vcl.StdCtrls    5439  +13 TButtonControl.WndProc
+005e4ec8 +024 Project2.exe Vcl.Controls    7258  +10 TControl.Perform
+005ea343 +023 Project2.exe Vcl.Controls   10493  +12 DoControlMsg
+005eaf53 +00b Project2.exe Vcl.Controls   10770   +1 TWinControl.WMCommand
+006948bd +045 Project2.exe Vcl.Forms       6693   +6 TCustomForm.WMCommand
+005e528e +2be Project2.exe Vcl.Controls    7480  +91 TControl.WndProc
+005ea1e3 +693 Project2.exe Vcl.Controls   10424 +169 TWinControl.WndProc
+0069123b +6db Project2.exe Vcl.Forms       4787 +216 TCustomForm.WndProc
+005e9730 +02c Project2.exe Vcl.Controls   10113   +3 TWinControl.MainWndProc
+004fcd7c +014 Project2.exe System.Classes 18175   +8 StdWndProc
+77cc4e9b +04b ntdll.dll                              KiUserCallbackDispatcher
+77aa78ba +06a USER32.dll                             SendMessageW
+77aa7716 +016 USER32.dll                             CallWindowProcW
+005ea2ee +0e6 Project2.exe Vcl.Controls   10465  +30 TWinControl.DefaultHandler
+005e5c34 +010 Project2.exe Vcl.Controls    7729   +1 TControl.WMLButtonUp
+005e528e +2be Project2.exe Vcl.Controls    7480  +91 TControl.WndProc
+005ea1e3 +693 Project2.exe Vcl.Controls   10424 +169 TWinControl.WndProc
+005fe19c +06c Project2.exe Vcl.StdCtrls    5439  +13 TButtonControl.WndProc
+005e9730 +02c Project2.exe Vcl.Controls   10113   +3 TWinControl.MainWndProc
+005e974b +047 Project2.exe Vcl.Controls   10116   +6 TWinControl.MainWndProc
+004fcd7c +014 Project2.exe System.Classes 18175   +8 StdWndProc
+77aa79cb +00b USER32.dll                             DispatchMessageW
+0069b0c3 +0f3 Project2.exe Vcl.Forms      11028  +23 TApplication.ProcessMessage
+0069b106 +00a Project2.exe Vcl.Forms      11058   +1 TApplication.HandleMessage
+0069b43d +0c9 Project2.exe Vcl.Forms      11196  +26 TApplication.Run
+007fe559 +049 Project2.exe Project2          18   +4 initialization
+76f8fa27 +017 KERNEL32.DLL                           BaseThreadInitThunk
+
+etc...
