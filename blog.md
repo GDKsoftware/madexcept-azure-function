@@ -32,6 +32,8 @@ Within the Function App resource you can define multiple functions.
 
 If you need more advanced settings, networking and scaling options for your functions, you'll need to create the function app with the Plan type: Functions Premium. More information about this can be found here https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale?WT.mc_id=Portal-WebsitesExtension#overview-of-plans
 
+Note that the minimum amount of active instances for the Premium is 1 - if your function is fast to startup and rarely called, this might be overkill.
+
 ## The endpoint
 
 When you create your first function from the VSCode extension, you'll notice a new folder named after your function and an `index.js` (or similar) file. In this file you'll find the export `async function(context, req) {}` which is your entry point for the function when the URL of your function is called.
