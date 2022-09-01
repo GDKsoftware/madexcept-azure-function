@@ -1,7 +1,7 @@
 const ParseMode = {
-	Key: 0,
-	Val: 1,
-	Stacktrace: 2,
+  Key: 0,
+  Val: 1,
+  Stacktrace: 2,
   Other: 3,
 };
 
