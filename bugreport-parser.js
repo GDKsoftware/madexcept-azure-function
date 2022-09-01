@@ -186,12 +186,12 @@ class BugreportParser {
         return {
             freeInBytes: parseInt(match[1]) * 1000000,
             totalInBytes: parseInt(match[2]) * 1000000,
-        }
+        };
     }
 
     return {
         freeInBytes: 0,
-        totalInBytes: 0
+        totalInBytes: 0,
     };
   }
 }

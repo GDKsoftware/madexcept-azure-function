@@ -122,13 +122,13 @@ describe('Parser test', () => {
           osName: 'Windows 10 x64 build 19043',
           freeMemory: 10043000000,
           totalMemory: 16314000000,
-          time: '2022-02-21T00:07:27.226Z'
+          time: '2022-02-21T00:07:27.226Z',
         },
         notifier: {
           name: 'madexcept-azure-function',
           version: '5.1.1',
-          url: 'https://github.com/gdksoftware/madexcept-azure-function'
-        }
+          url: 'https://github.com/gdksoftware/madexcept-azure-function',
+        },
       }],
     };
     assert.deepEqual(log, expected);

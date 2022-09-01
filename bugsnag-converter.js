@@ -20,20 +20,20 @@ class BugSnagConverter {
                     ],
                     app: {
                         id: bugdetails['executable'],
-                        version: bugdetails['version']
+                        version: bugdetails['version'],
                     },
                     device: {
                         hostname: bugdetails['computer_name'],
                         osName: bugdetails['operating_system'],
                         freeMemory: physMem.freeInBytes,
                         totalMemory: physMem.totalInBytes,
-                        time: errorDatetime.toISOString()
+                        time: errorDatetime.toISOString(),
                     },
                     notifier: {
                         name: 'madexcept-azure-function',
                         version: bugdetails['madExcept_version'],
-                        url: 'https://github.com/gdksoftware/madexcept-azure-function'
-                    }
+                        url: 'https://github.com/gdksoftware/madexcept-azure-function',
+                    },
                 },
             ],
         };
