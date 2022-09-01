@@ -43,7 +43,7 @@ rules:
       newlines-between: always
   max-len:
     - error
-    - 120
+    - 180
     - ignoreRegExpLiterals: true
   max-statements:
     - error

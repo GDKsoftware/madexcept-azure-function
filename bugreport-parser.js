@@ -1,6 +1,14 @@
+const ParseMode = {
+	Key: 0,
+	Val: 1,
+	Stacktrace: 2,
+  Other: 3,
+};
+
 class BugreportParser {
   constructor() {
     this.details = {};
+    this.stacktrace = [];
   }
 
   fixDateTimeString(value) {
@@ -25,7 +33,7 @@ class BugreportParser {
   }
 
   parseDateTime(value) {
-    const dt = Date.parse(this.fixDateTimeString(value));
+    const dt = Date.parse(this.fixDateTimeString(value) + 'Z');
     //return moment(dt).format('YYYY-MM-DDTHH:mm:ss+00:00');
     return dt;
   }
@@ -43,29 +51,93 @@ class BugreportParser {
     }
   }
 
+  parseStacktraceLine(line) {
+    const reInProject = /([0-9a-f]+)\s(\+[0-9a-f]+)\s([\w\d.-]*)\s+([\w\d.-]+)\s+(\d*)\s+(\+\d*)\s([\w\d.-]*)/i;
+    const projmatch = line.match(reInProject);
+    if (projmatch) {
+      return {
+        file: projmatch[4],
+        frameAddress: '0x' + projmatch[1],
+        inProject: true,
+        lineNumber: parseInt(projmatch[5]),
+        method: projmatch[7],
+      };
+    } else {
+      // test inside project but without line information
+      const reNoLine = /([0-9a-f]+)\s(\+[0-9a-f]+)\s([\w\d.-]*)\s([\w\d.-]+)\s+([\w\d.-]*)/i;
+      const nolinematch = line.match(reNoLine);
+      if (nolinematch) {
+        return {
+          file: nolinematch[4],
+          frameAddress: '0x' + nolinematch[1],
+          inProject: false,
+          lineNumber: 0,
+          method: nolinematch[5],
+        };
+      } else {
+        // test out of project dll line
+        const reDll = /([0-9a-f]+)\s(\+[0-9a-f]+)\s([\w\d.-]*)\s+([\w\d.-]*)/i;
+        const dllmatch = line.match(reDll);
+        if (dllmatch) {
+          return {
+            file: dllmatch[3],
+            frameAddress: '0x' + dllmatch[1],
+            inProject: false,
+            lineNumber: 0,
+            method: dllmatch[4],
+          };
+        }
+      }
+    }
+
+    return null;
+  }
+
   parsefromString(data) {
     let mode = 0;
     let key = '';
     let value = '';
+    //let current_thread = '';
+    let stacktraceline = '';
 
     for (let i = 0; i < data.length; i++) {
-      if (mode === 2) {
+      const curchar = data[i];
+
+      if (mode === ParseMode.Stacktrace) {
+        if (curchar === '\n') {
+          if (stacktraceline.trim() === '') {
+            mode = ParseMode.Other;
+          } else {
+            const line = this.parseStacktraceLine(stacktraceline); 
+            if (line)
+              this.stacktrace.push(line);
+          }
+
+          stacktraceline = '';
+        } else {
+          stacktraceline += curchar;
+        }
+
+        continue;
+      }
+      
+      if (mode === ParseMode.Other) {
         continue;
       }
 
-      if ((mode === 0) && (data[i] === ':')) {
+      if ((mode === ParseMode.Key) && (curchar === ':')) {
         key = key.trim();
-        mode += 1;
+        mode = ParseMode.Val;
         i++;
-      } else if (data[i] === '\r') {
+      } else if (curchar === '\r') {
         // ignore
-      } else if (data[i] === '\n') {
+      } else if (curchar === '\n') {
         if (!key) {
-          mode = 2;
+          mode = ParseMode.Stacktrace;
           continue;
         }
 
-        if (mode === 1) {
+        if (mode === ParseMode.Val) {
           this.parseKv(key, value);
         } else {
           // todo
@@ -73,16 +145,16 @@ class BugreportParser {
 
         key = '';
         value = '';
-        mode = 0;
+        mode = ParseMode.Key;
       } else {
-        if (mode === 0) {
-          if (data[i] === '/') {
+        if (mode === ParseMode.Key) {
+          if (curchar === '/') {
             key += '_';
           } else {
-            key += data[i];
+            key += curchar;
           }
-        } else if (mode === 1) {
-          value += data[i];
+        } else if (mode === ParseMode.Val) {
+          value += curchar;
         }
       }
     }
@@ -99,8 +171,28 @@ class BugreportParser {
     };
   }
 
+  getStacktrace() {
+    return this.stacktrace;
+  }
+
   getDetailedInfo() {
     return this.details;
+  }
+
+  getPhysicalMemory() {
+    const re = /(\d*)\/(\d*)\sMB/;
+    const match = this.details['physical_memory'].match(re);
+    if (match) {
+        return {
+            freeInBytes: parseInt(match[1]) * 1000000,
+            totalInBytes: parseInt(match[2]) * 1000000,
+        }
+    }
+
+    return {
+        freeInBytes: 0,
+        totalInBytes: 0
+    };
   }
 }
 
