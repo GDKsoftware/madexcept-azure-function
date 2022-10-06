@@ -57,7 +57,7 @@ class BugreportParser {
     const projmatch = line.match(reInProject);
     if (projmatch) {
       return {
-        file: projmatch[4],
+        file: projmatch[4] + '.pas',
         frameAddress: '0x' + projmatch[1],
         inProject: true,
         lineNumber: parseInt(projmatch[5]),
