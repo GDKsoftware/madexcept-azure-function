@@ -7,6 +7,7 @@ const ParseMode = {
 
 class BugreportParser {
   constructor() {
+    this.originalReport = '';
     this.details = {};
     this.stacktrace = [];
   }
@@ -99,6 +100,8 @@ class BugreportParser {
     let value = '';
     //let current_thread = '';
     let stacktraceline = '';
+
+    this.originalReport = data;
 
     for (let i = 0; i < data.length; i++) {
       const curchar = data[i];

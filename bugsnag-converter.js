@@ -1,3 +1,4 @@
+
 class BugSnagConverter {
     /**
      * @param {BugreportParser} bugreport
@@ -8,6 +9,12 @@ class BugSnagConverter {
         const physMem = bugreport.getPhysicalMemory();
         const errorDatetime = new Date(bugdetails['date_time']);
         return {
+            payloadVersion: 5,
+            notifier: {
+                name: 'madexcept-azure-function',
+                version: bugdetails['madExcept_version'],
+                url: 'https://github.com/gdksoftware/madexcept-azure-function',
+            },
             events: [
                 {
                     exceptions: [
@@ -18,6 +25,9 @@ class BugSnagConverter {
                             type: 'c',
                         },
                     ],
+                    user: {
+                        name: bugdetails['user_name'],
+                    },
                     app: {
                         id: bugdetails['executable'],
                         version: bugdetails['version'],
@@ -29,11 +39,9 @@ class BugSnagConverter {
                         totalMemory: physMem.totalInBytes,
                         time: errorDatetime.toISOString(),
                     },
-                    notifier: {
-                        name: 'madexcept-azure-function',
-                        version: bugdetails['madExcept_version'],
-                        url: 'https://github.com/gdksoftware/madexcept-azure-function',
-                    },
+                    metaData: {
+                        fullreport: bugreport.originalReport,
+                    }
                 },
             ],
         };

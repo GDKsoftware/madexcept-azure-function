@@ -4,6 +4,7 @@ const { describe, it } = require('mocha');
 
 const { BugreportParser } = require('../bugreport-parser');
 const { BugSnagConverter } = require('../bugsnag-converter');
+const { BugSnagSender } = require('../bugsnag-sender');
 
 describe('Parser test', () => {
   it('can parse datetime', () => {
@@ -43,8 +44,15 @@ describe('Parser test', () => {
 
     const bugsnag = new BugSnagConverter();
     const log = bugsnag.convert(parser);
+    delete log.events[0].metaData;
 
     const expected = {
+      payloadVersion: 5,
+      notifier: {
+        name: 'madexcept-azure-function',
+        version: '5.1.1',
+        url: 'https://github.com/gdksoftware/madexcept-azure-function',
+      },
       events: [{
         exceptions: [{
           errorClass: 'CustomException',
@@ -124,11 +132,9 @@ describe('Parser test', () => {
           totalMemory: 16314000000,
           time: '2022-02-21T00:07:27.226Z',
         },
-        notifier: {
-          name: 'madexcept-azure-function',
-          version: '5.1.1',
-          url: 'https://github.com/gdksoftware/madexcept-azure-function',
-        },
+        user: {
+          name: 'MyUsername',
+        }
       }],
     };
     assert.deepEqual(log, expected);
@@ -179,3 +185,18 @@ describe('Parser test', () => {
     });
   });
 });
+
+// describe('sendtest', async () => {
+//   it('should send something', async () => {
+//     const parser = new BugreportParser();
+
+//     const buffer = await fs.readFile('resources/bugreport.txt');
+//     parser.parsefromString(buffer.toString('utf-8'));
+
+//     const bugsnag = new BugSnagConverter();
+//     const log = bugsnag.convert(parser);
+
+//     const sender = new BugSnagSender();
+//     await sender.send(log);
+//   });
+// });
