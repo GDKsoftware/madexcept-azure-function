@@ -15,7 +15,7 @@ class BugSnagSender {
                 'Bugsnag-Api-Key': process.env['BUGSNAG_API_KEY'],
                 'Bugsnag-Payload-Version': '5',
                 'Bugsnag-Sent-At': data.events[0].device.time,
-            }
+            },
         };
         const req = https.request(reqdata, (res) => {
             console.log(`STATUS: ${res.statusCode}`);
@@ -34,8 +34,8 @@ class BugSnagSender {
         req.write(strdata);
         req.end();
     }
-};
+}
 
 module.exports = {
-    BugSnagSender
+    BugSnagSender,
 };

@@ -1,4 +1,3 @@
-
 class BugSnagConverter {
     /**
      * @param {BugreportParser} bugreport
@@ -41,7 +40,7 @@ class BugSnagConverter {
                     },
                     metaData: {
                         fullreport: bugreport.originalReport,
-                    }
+                    },
                 },
             ],
         };
