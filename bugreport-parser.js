@@ -40,7 +40,7 @@ class BugreportParser {
   }
 
   parseKv(key, value) {
-    const fixedKey = key.replaceAll('. ', '_').replaceAll(' ', '_');
+    const fixedKey = key.replace(/\.\s/g, '_').replace(/\s/g, '_');
     if (fixedKey === 'date_time') {
       const parsedValue = this.parseDateTime(value);
       this.details[fixedKey] = parsedValue;
