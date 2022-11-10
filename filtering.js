@@ -22,4 +22,5 @@ function isAllowed(application) {
 
 module.exports = {
     isAllowed,
+    getApiKeyForApplication,
 };
