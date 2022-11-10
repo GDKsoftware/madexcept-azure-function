@@ -190,7 +190,7 @@ describe('Parser test', () => {
 describe('other things', async () => {
     it('should apply filters properly', async () => {
         process.env.FILTER = 'single\\.exe:numbered_[\\d\\.]*\\.exe';
-        assert.isTrue(isAllowed('single.exe'), 'single.exe test');
+        assert.isTrue(isAllowed('SinglE.exe'), 'single.exe test');
         assert.isFalse(isAllowed('doesntexist.exe'), 'doesntexist.exe test');
         assert.isTrue(isAllowed('numbered_5.1.2.exe'), 'numbered_5.1.2.exe test');
     });
