@@ -13,17 +13,17 @@ require('dotenv').config();
 let handler;
 let containerClient;
 
-if (process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING) {
-    handler = new MadexceptRequestHandler(storeFile);
-} else if (process.env.BUGSNAG_API_KEY) {
+if (process.env.BUGSNAG_API_KEY) {
     handler = new MadexceptRequestHandler(bugsnagSend);
+} else if (process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING) {
+    handler = new MadexceptRequestHandler(storeFile);
 } else {
     console.error('No azure or bugsnag configuration set');
     process.exit(1);
 }
 
 async function init() {
-    if (process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING && !containerClient) {
+    if (!process.env.BUGSNAG_API_KEY && !containerClient) {
         const blobServiceClient = BlobServiceClient.fromConnectionString(
             process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING);
         containerClient = blobServiceClient.getContainerClient('madexcept');
