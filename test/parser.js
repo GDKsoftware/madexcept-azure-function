@@ -4,7 +4,8 @@ const { describe, it } = require('mocha');
 
 const { BugreportParser } = require('../bugreport-parser');
 const { BugSnagConverter } = require('../bugsnag-converter');
-const { BugSnagSender } = require('../bugsnag-sender');
+const { isAllowed } = require('../filtering');
+// const { BugSnagSender } = require('../bugsnag-sender');
 
 describe('Parser test', () => {
   it('can parse datetime', () => {
@@ -57,33 +58,33 @@ describe('Parser test', () => {
         exceptions: [{
           errorClass: 'CustomException',
           message: 'Hello, World.', stacktrace:
-            [{ file: 'Unit1', frameAddress: '0x007f2d31', inProject: true, lineNumber: 35, method: 'TForm1.Button1Click' },
-            { file: 'Vcl.Controls', frameAddress: '0x005e57e7', inProject: true, lineNumber: 7596, method: 'TControl.Click' },
-            { file: 'Vcl.StdCtrls', frameAddress: '0x005fe542', inProject: true, lineNumber: 5609, method: 'TCustomButton.Click' },
-            { file: 'Vcl.StdCtrls', frameAddress: '0x005ff6cc', inProject: true, lineNumber: 6244, method: 'TCustomButton.CNCommand' }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
+            [{ file: 'Unit1.pas', frameAddress: '0x007f2d31', inProject: true, lineNumber: 35, method: 'TForm1.Button1Click' },
+            { file: 'Vcl.Controls.pas', frameAddress: '0x005e57e7', inProject: true, lineNumber: 7596, method: 'TControl.Click' },
+            { file: 'Vcl.StdCtrls.pas', frameAddress: '0x005fe542', inProject: true, lineNumber: 5609, method: 'TCustomButton.Click' },
+            { file: 'Vcl.StdCtrls.pas', frameAddress: '0x005ff6cc', inProject: true, lineNumber: 6244, method: 'TCustomButton.CNCommand' }, {
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
             }, {
-              file: 'Vcl.StdCtrls', frameAddress: '0x005fe19c', inProject: true, lineNumber: 5439, method: 'TButtonControl.WndProc',
+              file: 'Vcl.StdCtrls.pas', frameAddress: '0x005fe19c', inProject: true, lineNumber: 5439, method: 'TButtonControl.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e4ec8', inProject: true, lineNumber: 7258, method: 'TControl.Perform',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e4ec8', inProject: true, lineNumber: 7258, method: 'TControl.Perform',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005ea343', inProject: true, lineNumber: 10493, method: 'DoControlMsg',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005ea343', inProject: true, lineNumber: 10493, method: 'DoControlMsg',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005eaf53', inProject: true, lineNumber: 10770, method: 'TWinControl.WMCommand',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005eaf53', inProject: true, lineNumber: 10770, method: 'TWinControl.WMCommand',
             }, {
-              file: 'Vcl.Forms', frameAddress: '0x006948bd', inProject: true, lineNumber: 6693, method: 'TCustomForm.WMCommand',
+              file: 'Vcl.Forms.pas', frameAddress: '0x006948bd', inProject: true, lineNumber: 6693, method: 'TCustomForm.WMCommand',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
             }, {
-              file: 'Vcl.Forms', frameAddress: '0x0069123b', inProject: true, lineNumber: 4787, method: 'TCustomForm.WndProc',
+              file: 'Vcl.Forms.pas', frameAddress: '0x0069123b', inProject: true, lineNumber: 4787, method: 'TCustomForm.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e9730', inProject: true, lineNumber: 10113, method: 'TWinControl.MainWndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e9730', inProject: true, lineNumber: 10113, method: 'TWinControl.MainWndProc',
             }, {
-              file: 'System.Classes', frameAddress: '0x004fcd7c', inProject: true, lineNumber: 18175, method: 'StdWndProc',
+              file: 'System.Classes.pas', frameAddress: '0x004fcd7c', inProject: true, lineNumber: 18175, method: 'StdWndProc',
             }, {
               file: 'ntdll.dll', frameAddress: '0x77cc4e9b', inProject: false, lineNumber: 0, method: 'KiUserCallbackDispatcher',
             }, {
@@ -91,31 +92,31 @@ describe('Parser test', () => {
             }, {
               file: 'USER32.dll', frameAddress: '0x77aa7716', inProject: false, lineNumber: 0, method: 'CallWindowProcW',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005ea2ee', inProject: true, lineNumber: 10465, method: 'TWinControl.DefaultHandler',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005ea2ee', inProject: true, lineNumber: 10465, method: 'TWinControl.DefaultHandler',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e5c34', inProject: true, lineNumber: 7729, method: 'TControl.WMLButtonUp',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e5c34', inProject: true, lineNumber: 7729, method: 'TControl.WMLButtonUp',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e528e', inProject: true, lineNumber: 7480, method: 'TControl.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005ea1e3', inProject: true, lineNumber: 10424, method: 'TWinControl.WndProc',
             }, {
-              file: 'Vcl.StdCtrls', frameAddress: '0x005fe19c', inProject: true, lineNumber: 5439, method: 'TButtonControl.WndProc',
+              file: 'Vcl.StdCtrls.pas', frameAddress: '0x005fe19c', inProject: true, lineNumber: 5439, method: 'TButtonControl.WndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e9730', inProject: true, lineNumber: 10113, method: 'TWinControl.MainWndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e9730', inProject: true, lineNumber: 10113, method: 'TWinControl.MainWndProc',
             }, {
-              file: 'Vcl.Controls', frameAddress: '0x005e974b', inProject: true, lineNumber: 10116, method: 'TWinControl.MainWndProc',
+              file: 'Vcl.Controls.pas', frameAddress: '0x005e974b', inProject: true, lineNumber: 10116, method: 'TWinControl.MainWndProc',
             }, {
-              file: 'System.Classes', frameAddress: '0x004fcd7c', inProject: true, lineNumber: 18175, method: 'StdWndProc',
+              file: 'System.Classes.pas', frameAddress: '0x004fcd7c', inProject: true, lineNumber: 18175, method: 'StdWndProc',
             }, {
               file: 'USER32.dll', frameAddress: '0x77aa79cb', inProject: false, lineNumber: 0, method: 'DispatchMessageW',
             }, {
-              file: 'Vcl.Forms', frameAddress: '0x0069b0c3', inProject: true, lineNumber: 11028, method: 'TApplication.ProcessMessage',
+              file: 'Vcl.Forms.pas', frameAddress: '0x0069b0c3', inProject: true, lineNumber: 11028, method: 'TApplication.ProcessMessage',
             }, {
-              file: 'Vcl.Forms', frameAddress: '0x0069b106', inProject: true, lineNumber: 11058, method: 'TApplication.HandleMessage',
+              file: 'Vcl.Forms.pas', frameAddress: '0x0069b106', inProject: true, lineNumber: 11058, method: 'TApplication.HandleMessage',
             }, {
-              file: 'Vcl.Forms', frameAddress: '0x0069b43d', inProject: true, lineNumber: 11196, method: 'TApplication.Run',
+              file: 'Vcl.Forms.pas', frameAddress: '0x0069b43d', inProject: true, lineNumber: 11196, method: 'TApplication.Run',
             }, {
-              file: 'Project2', frameAddress: '0x007fe559', inProject: true, lineNumber: 18, method: 'initialization',
+              file: 'Project2.pas', frameAddress: '0x007fe559', inProject: true, lineNumber: 18, method: 'initialization',
             }, {
               file: 'KERNEL32.DLL', frameAddress: '0x76f8fa27', inProject: false, lineNumber: 0, method: 'BaseThreadInitThunk',
             }],
@@ -134,7 +135,7 @@ describe('Parser test', () => {
         },
         user: {
           name: 'MyUsername',
-        }
+        },
       }],
     };
     assert.deepEqual(log, expected);
@@ -147,7 +148,7 @@ describe('Parser test', () => {
     const trace = parser.parseStacktraceLine(line);
 
     assert.deepEqual(trace, {
-        file: 'FEmployeeBaseOverview',
+        file: 'FEmployeeBaseOverview.pas',
         frameAddress: '0x034593c8',
         inProject: true,
         lineNumber: 2239,
@@ -184,6 +185,15 @@ describe('Parser test', () => {
         method: 'DispatchMessageW',
     });
   });
+});
+
+describe('other things', async () => {
+    it('should apply filters properly', async () => {
+        process.env.FILTER = 'single\\.exe:numbered_[\\d\\.]*\\.exe';
+        assert.isTrue(isAllowed('single.exe'), 'single.exe test');
+        assert.isFalse(isAllowed('doesntexist.exe'), 'doesntexist.exe test');
+        assert.isTrue(isAllowed('numbered_5.1.2.exe'), 'numbered_5.1.2.exe test');
+    });
 });
 
 // describe('sendtest', async () => {
