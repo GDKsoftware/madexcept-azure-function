@@ -1,9 +1,8 @@
 const https = require('https');
-const process = require('process');
 require('dotenv').config();
 
 class BugSnagSender {
-    send(data) {
+    send(data, apikey) {
         const strdata = JSON.stringify(data);
         const reqdata = {
             hostname: 'notify.bugsnag.com',
@@ -12,7 +11,7 @@ class BugSnagSender {
             headers: {
                 'Content-Type': 'application/json',
                 'Content-Length': strdata.length,
-                'Bugsnag-Api-Key': process.env['BUGSNAG_API_KEY'],
+                'Bugsnag-Api-Key': apikey,
                 'Bugsnag-Payload-Version': '5',
                 'Bugsnag-Sent-At': data.events[0].device.time,
             },

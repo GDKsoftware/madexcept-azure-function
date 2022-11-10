@@ -189,7 +189,13 @@ describe('Parser test', () => {
 
 describe('other things', async () => {
     it('should apply filters properly', async () => {
-        process.env.FILTER = 'single\\.exe:numbered_[\\d\\.]*\\.exe';
+        process.env.BUGSNAG_FILTERS = 'single:numbered';
+        process.env['SINGLE_RE'] = 'single\\.exe';
+        process.env['SINGLE_API_KEY'] = '123';
+
+        process.env['NUMBERED_RE'] = 'numbered_[\\d\\.]*\\.exe';
+        process.env['NUMBERED_API_KEY'] = '456';
+
         assert.isTrue(isAllowed('SinglE.exe'), 'single.exe test');
         assert.isFalse(isAllowed('doesntexist.exe'), 'doesntexist.exe test');
         assert.isTrue(isAllowed('numbered_5.1.2.exe'), 'numbered_5.1.2.exe test');

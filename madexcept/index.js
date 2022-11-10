@@ -4,7 +4,7 @@ const HTTP_CODES = require('http-status-enum');
 const { BugreportParser } = require('../bugreport-parser');
 const { BugSnagConverter } = require('../bugsnag-converter');
 const { BugSnagSender } = require('../bugsnag-sender');
-const { isAllowed } = require('../filtering');
+const { getApiKeyForApplication } = require('../filtering');
 const { MadexceptRequestHandler } = require('../handler');
 const { logger } = require('../logger');
 
@@ -13,7 +13,7 @@ require('dotenv').config();
 let handler;
 let containerClient;
 
-if (process.env.BUGSNAG_API_KEY) {
+if (process.env.USE_BUGSNAG) {
     handler = new MadexceptRequestHandler(bugsnagSend);
 } else if (process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING) {
     handler = new MadexceptRequestHandler(storeFile);
@@ -23,7 +23,7 @@ if (process.env.BUGSNAG_API_KEY) {
 }
 
 async function init() {
-    if (!process.env.BUGSNAG_API_KEY && !containerClient) {
+    if (!process.env.USE_BUGSNAG && !containerClient) {
         const blobServiceClient = BlobServiceClient.fromConnectionString(
             process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING);
         containerClient = blobServiceClient.getContainerClient('madexcept');
@@ -61,14 +61,15 @@ async function bugsnagSend(filename, data, uuid, logFunc) {
         const parser = new BugreportParser();
         parser.parsefromString(data.toString('utf-8'));
 
-        if (isAllowed(parser.details.executable)) {
+        const apikey = getApiKeyForApplication(parser.details.executable);
+        if (apikey) {
             logFunc('Sending Madexcept report from ' + parser.application + ' to bugsnag');
 
             const converter = new BugSnagConverter();
             const log = converter.convert(parser);
 
             const sender = new BugSnagSender();
-            await sender.send(log);
+            await sender.send(log, apikey);
         } else {
             logFunc('Madexcept report from ' + parser.application + ' is filtered out');
         }

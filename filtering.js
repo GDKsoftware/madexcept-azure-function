@@ -1,16 +1,23 @@
 require('dotenv').config();
 
-function isAllowed(application) {
+function getApiKeyForApplication(application) {
     const lwapp = application.toLowerCase();
-    const filters = process.env.FILTER.split(':');
+    const filters = process.env.BUGSNAG_FILTERS.split(':');
     for (let f of filters) {
-        const re = new RegExp(f);
+        const fup = f.toUpperCase();
+        const retext = process.env[fup + '_RE'];
+        const re = new RegExp(retext);
         if (lwapp.match(re)) {
-            return true;
+            return process.env[fup + '_API_KEY'];
         }
     }
 
     return false;
+}
+
+function isAllowed(application) {
+    const apikey = getApiKeyForApplication(application);
+    return !!apikey;
 }
 
 module.exports = {
