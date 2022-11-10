@@ -61,7 +61,7 @@ async function bugsnagSend(filename, data, uuid, logFunc) {
         const parser = new BugreportParser();
         parser.parsefromString(data.toString('utf-8'));
 
-        if (isAllowed(parser.application)) {
+        if (isAllowed(parser.details.executable)) {
             logFunc('Sending Madexcept report from ' + parser.application + ' to bugsnag');
 
             const converter = new BugSnagConverter();
