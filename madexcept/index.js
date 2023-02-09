@@ -36,8 +36,6 @@ async function storeFile(filename, data, uuid, logFunc) {
         parser.parsefromString(data.toString('utf-8'));
         const info = parser.getLokiInfo();
 
-        logFunc('Received bugreport: ' + JSON.stringify(info));
-
         if (info.message) {
             info.labels.storageuuid = uuid;
             logger.error(info);
@@ -63,7 +61,7 @@ async function bugsnagSend(filename, data, uuid, logFunc) {
 
         const apikey = getApiKeyForApplication(parser.details.executable);
         if (apikey) {
-            logFunc('Sending Madexcept report from ' + parser.application + ' to bugsnag');
+            logFunc('Sending Madexcept report from ' + parser.details.executable + ' to bugsnag');
 
             const converter = new BugSnagConverter();
             const log = converter.convert(parser);
@@ -71,7 +69,7 @@ async function bugsnagSend(filename, data, uuid, logFunc) {
             const sender = new BugSnagSender();
             await sender.send(log, apikey);
         } else {
-            logFunc('Madexcept report from ' + parser.application + ' is filtered out');
+            logFunc('Madexcept report from ' + parser.details.executable + ' is filtered out');
         }
     }
 }
