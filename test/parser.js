@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const { describe, it } = require('mocha');
 
 const { BugreportParser } = require('../bugreport-parser');
-const { BugSnagConverter } = require('../bugsnag-converter');
+const { BugSnagConverter } = require('../bugsnag/bugsnag-converter');
 const { isAllowed } = require('../filtering');
 // const { BugSnagSender } = require('../bugsnag-sender');
 
