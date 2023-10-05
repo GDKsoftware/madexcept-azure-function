@@ -2,22 +2,32 @@ const { BlobServiceClient, BlockBlobTier } = require('@azure/storage-blob');
 const HTTP_CODES = require('http-status-enum');
 
 const { BugreportParser } = require('../bugreport-parser');
+const { BugSnagConverter } = require('../bugsnag-converter');
+const { BugSnagSender } = require('../bugsnag-sender');
+const { getApiKeyForApplication } = require('../filtering');
 const { MadexceptRequestHandler } = require('../handler');
 const { logger } = require('../logger');
 
+require('dotenv').config();
+
+let handler;
 let containerClient;
-const handler = new MadexceptRequestHandler(storeFile);
+
+if (process.env.USE_BUGSNAG) {
+    handler = new MadexceptRequestHandler(bugsnagSend);
+} else if (process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING) {
+    handler = new MadexceptRequestHandler(storeFile);
+} else {
+    console.error('No azure or bugsnag configuration set');
+    process.exit(1);
+}
 
 async function init() {
-    if (!containerClient) {
+    if (!process.env.USE_BUGSNAG && !containerClient) {
         const blobServiceClient = BlobServiceClient.fromConnectionString(
             process.env.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING);
         containerClient = blobServiceClient.getContainerClient('madexcept');
     }
-}
-
-function isMadexceptLog(filename) {
-    return filename.endsWith('.txt');
 }
 
 async function storeFile(filename, data, uuid, logFunc) {
@@ -25,8 +35,6 @@ async function storeFile(filename, data, uuid, logFunc) {
         const parser = new BugreportParser();
         parser.parsefromString(data.toString('utf-8'));
         const info = parser.getLokiInfo();
-
-        logFunc('Received bugreport: ' + JSON.stringify(info));
 
         if (info.message) {
             info.labels.storageuuid = uuid;
@@ -44,6 +52,30 @@ async function storeFile(filename, data, uuid, logFunc) {
     } catch {
         // ignore exception, this is not always available
     }
+}
+
+async function bugsnagSend(filename, data, uuid, logFunc) {
+    if (isMadexceptLog(filename)) {
+        const parser = new BugreportParser();
+        parser.parsefromString(data.toString('utf-8'));
+
+        const apikey = getApiKeyForApplication(parser.details.executable);
+        if (apikey) {
+            logFunc('Sending Madexcept report from ' + parser.details.executable + ' to bugsnag');
+
+            const converter = new BugSnagConverter();
+            const log = converter.convert(parser);
+
+            const sender = new BugSnagSender();
+            await sender.send(log, apikey);
+        } else {
+            logFunc('Madexcept report from ' + parser.details.executable + ' is filtered out');
+        }
+    }
+}
+
+function isMadexceptLog(filename) {
+    return filename.endsWith('.txt');
 }
 
 async function madexcept(context, req) {

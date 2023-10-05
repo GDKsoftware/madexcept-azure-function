@@ -25,7 +25,7 @@ class MadexceptRequestHandler {
         const parts = multipart.parse(bodyBuffer, boundary);
 
         if (!parts.length) {
-            throw new Error('File buffer is incorrect');
+            throw new Error('File buffer is incorrect(' + req.body + ')');
         }
 
         await this.processFiles(parts, logFunc);
